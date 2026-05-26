@@ -1,0 +1,21 @@
+# Firebase App Hosting runtime config
+# Docs: https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: ADJUST_API_TOKEN
+    value: PqDBw5XQFVnMp9xxKXH8srxTqNQ-NSk5T39Zkvi1Hc73FzFzzg
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_USD_TO_VND
+    value: "26000"
+    availability:
+      - BUILD
+      - RUNTIME
