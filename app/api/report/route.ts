@@ -8,12 +8,14 @@ export async function GET(req: Request) {
   const startDate = url.searchParams.get("start") ?? defaultStart();
   const endDate = url.searchParams.get("end") ?? today();
   const withCountry = url.searchParams.get("country") === "1";
+  const withDay = url.searchParams.get("day") === "1";
 
   try {
     const rows = await fetchReport({
       startDate,
       endDate,
       withCountry,
+      withDay,
       appTokens: configuredAppTokens(),
     });
     return NextResponse.json({
@@ -21,6 +23,7 @@ export async function GET(req: Request) {
       startDate,
       endDate,
       withCountry,
+      withDay,
       fetchedAt: new Date().toISOString(),
     });
   } catch (err) {

@@ -1,4 +1,6 @@
 node_modules
+node_modules.nosync
+tsconfig.tsbuildinfo
 .next
 out
 .DS_Store

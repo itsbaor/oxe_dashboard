@@ -25,7 +25,7 @@ export const METRICS = [
   "arpdau_ad",
 ] as const;
 
-export type Dimension = (typeof BASE_DIMENSIONS)[number] | "country";
+export type Dimension = (typeof BASE_DIMENSIONS)[number] | "country" | "day";
 export type Metric = (typeof METRICS)[number];
 
 export type ReportRow = {
@@ -33,6 +33,7 @@ export type ReportRow = {
   channel: string;
   campaign: string;
   country?: string;
+  day?: string;
 } & Partial<Record<Metric, number>>;
 
 export type ReportParams = {
@@ -40,6 +41,7 @@ export type ReportParams = {
   endDate: string;
   appTokens?: string[];
   withCountry?: boolean;
+  withDay?: boolean;
 };
 
 export async function fetchReport(params: ReportParams): Promise<ReportRow[]> {
@@ -48,9 +50,9 @@ export async function fetchReport(params: ReportParams): Promise<ReportRow[]> {
     throw new Error("ADJUST_API_TOKEN is not configured on the server");
   }
 
-  const dimensions = params.withCountry
-    ? [...BASE_DIMENSIONS, "country"]
-    : [...BASE_DIMENSIONS];
+  const dimensions: Dimension[] = [...BASE_DIMENSIONS];
+  if (params.withCountry) dimensions.push("country");
+  if (params.withDay) dimensions.push("day");
 
   const url = new URL(REPORTS_ENDPOINT);
   url.searchParams.set("date_period", `${params.startDate}:${params.endDate}`);
@@ -87,6 +89,9 @@ export async function fetchReport(params: ReportParams): Promise<ReportRow[]> {
       };
       if (params.withCountry) {
         out.country = String(r.country ?? "");
+      }
+      if (params.withDay) {
+        out.day = String(r.day ?? "");
       }
       for (const m of METRICS) {
         const v = r[m];

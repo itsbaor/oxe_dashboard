@@ -2,8 +2,206 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { @apply bg-neutral-950 text-neutral-100; }
+html,
+body {
+  height: 100%;
+}
 
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+body {
+  @apply bg-neutral-950 text-neutral-100;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  /* Subtle depth: two soft radial glows over the near-black base */
+  background-color: #0a0a0a;
+  background-image:
+    radial-gradient(60rem 60rem at 12% -10%, rgba(99, 102, 241, 0.10), transparent 60%),
+    radial-gradient(50rem 50rem at 100% 0%, rgba(217, 70, 239, 0.08), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* ---- Selection + focus ---------------------------------------------- */
+::selection {
+  background: rgba(129, 140, 248, 0.3);
+  color: #fff;
+}
+
+/* Consistent focus + hover feedback for every form control */
+@layer base {
+  select,
+  input {
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease;
+  }
+  select:hover:not(:disabled),
+  input:hover:not(:disabled) {
+    border-color: rgba(115, 115, 115, 0.7);
+  }
+  select:focus-visible,
+  input:focus-visible {
+    outline: none;
+    border-color: rgba(129, 140, 248, 0.7);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+  }
+  /* Make the native date-picker indicator visible on the dark theme */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.18s ease;
+  }
+  input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    opacity: 1;
+  }
+}
+
+/* ---- Scrollbars ----------------------------------------------------- */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(82, 82, 82, 0.5);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(115, 115, 115, 0.7);
+  background-clip: padding-box;
+}
+
+/* ---- Keyframes ------------------------------------------------------ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(129, 140, 248, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(129, 140, 248, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(129, 140, 248, 0);
+  }
+}
+
+/* ---- Animation utilities -------------------------------------------- */
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out both;
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-scale-in {
+    animation: scale-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-spin-slow {
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* Sweeping highlight for skeleton loaders */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background: rgba(38, 38, 38, 0.6);
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(115, 115, 115, 0.18),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Card hover lift used across KPI / app cards */
+  .card-hover {
+    transition:
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      background-color 0.25s ease;
+    will-change: transform;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    border-color: rgba(115, 115, 115, 0.55);
+    box-shadow:
+      0 10px 30px -12px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(129, 140, 248, 0.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-scale-in,
+    .shimmer::after {
+      animation: none !important;
+    }
+    .card-hover {
+      transition: none !important;
+    }
+  }
+}
